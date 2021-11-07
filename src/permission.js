@@ -1,8 +1,34 @@
-// import router from './router'
-// import store from './store'
+/**
+ * 判断是否有token
+ * 有token  是否是登录页
+ * 无token  判断是否是白名单 是白名单 直接访问 不是白名单就要跳转登录页
+ */
+import router from './router'
+import store from './store'
+const whiteList = ['/login', '/404']
+import NProgress from 'nprogress' // progress bar
+import 'nprogress/nprogress.css' // progress bar style
+
+router.beforeEach((to, from, next) => {
+  NProgress.start()
+  if (store.getters.token) {
+    // 有token
+    if (to.path === '/login') {
+      next('/')
+    } else {
+      next()
+    }
+  } else {
+    // 无token
+    if (whiteList.includes(to.path)) {
+      next()
+    } else {
+      next('/login')
+    }
+  }
+  NProgress.done()
+})
 // import { Message } from 'element-ui'
-// import NProgress from 'nprogress' // progress bar
-// import 'nprogress/nprogress.css' // progress bar style
 // import { getToken } from '@/utils/auth' // get token from cookie
 // import getPageTitle from '@/utils/get-page-title'
 

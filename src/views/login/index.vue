@@ -71,7 +71,7 @@
 
 <script>
 import { validMobile } from '@/utils/validate'
-import { login } from '@/api/user'
+import { mapActions } from 'vuex'
 export default {
   name: 'Login',
   data () {
@@ -97,18 +97,22 @@ export default {
       },
       loading: false,
       passwordType: 'password',
+      // 跳转页面----》存储页面路径的回跳地址
       redirect: undefined
     }
   },
+  // 监控路由的变化
   watch: {
     $route: {
       handler: function (route) {
         this.redirect = route.query && route.query.redirect
+        console.log('路由参数监控', route, this.redirect)
       },
       immediate: true
     }
   },
   methods: {
+    ...mapActions('user', ['getTokenAction']),
     showPwd () {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -127,11 +131,10 @@ export default {
           this.loading = true
           console.log('登录')
           try {
-            const res = await login(this.loginForm)
-            console.log(res)
-            // 调用login存储到vuex中
-            console.log('调用的结果vuex实例：', this.$store)
-            this.$store.commit('user/setToken', res)
+            // 重要 登录后存token一定要先存token所以await不然401
+            await this.getTokenAction(this.loginForm)
+            // 短路
+            this.$router.replace(this.redirect || '/')
           } catch (error) {
             console.dir(error)
           }

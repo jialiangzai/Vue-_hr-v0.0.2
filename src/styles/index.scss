@@ -14,7 +14,11 @@ body {
   font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,
     Microsoft YaHei, Arial, sans-serif;
 }
-
+// 进度条样式
+#nprogress .bar {
+  background: rgb(35, 47, 206) !important;
+  height: 6px !important;
+}
 label {
   font-weight: 700;
 }
