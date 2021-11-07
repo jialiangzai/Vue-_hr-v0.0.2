@@ -7,7 +7,11 @@ function resolve (dir) {
 }
 
 const name = defaultSettings.title || 'vue Admin Template' // page title
-
+/**
+ * 指令 dev本地地址 prod stage后台的prod 三个环境
+ * /api
+ * /prod-api
+ */
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
 // For example, Mac: sudo npm run

@@ -5,7 +5,8 @@ import { getToken } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
-  // 动态请求基础地址
+  // 动态请求基础地址 无缝切换不同环境的请求地址
+  // process.env环境变量返回的是一个对象 VUE_APP_BASE_API是键
   baseURL: process.env.VUE_APP_BASE_API // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   // timeout: 5000 // request timeout
@@ -45,10 +46,23 @@ service.interceptors.response.use(
    * Here is just an example
    * You can also judge the status by HTTP Status Code
    */
+  // 因为参数传错仍然是200判断处理
   response => {
-    const res = response.data
+    const { success, message, data, code } = response.data
     // 给页面返回数据
-    return res
+    // return res
+    if (success || code === 1000) {
+      // 返回token
+      return data
+    } else {
+      // 请求失败200但是输入正确
+      Message({
+        message: message,
+        type: 'error'
+      })
+      // 对外抛出错误页面捕获 这里没error所以要new一个
+      return Promise.reject(new Error(message))
+    }
   },
   error => {
     console.log('err' + error) // for debug

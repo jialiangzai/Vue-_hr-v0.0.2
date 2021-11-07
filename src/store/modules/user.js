@@ -1,7 +1,20 @@
 export default {
   namespaced: true,
-  state: {},
-  mutations: {},
+  state: {
+    // 定义变量(响应式)
+    token: null
+  },
+  mutations: {
+    // 修改变量
+    /**
+     *
+     * @param {*} state 获取变量
+     * @param {*} token 调用此方法传入的参数
+     */
+    setToken (state, token) {
+      state.token = token
+    }
+  },
   actions: {}
 }
 
@@ -11,7 +24,7 @@ export default {
 
 // const getDefaultState = () => {
 //   return {
-//     token: getToken(),
+//     token: getT oken(),
 //     name: '',
 //     avatar: ''
 //   }
