@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
+import router from '@/router'
 
 // create an axios instance
 const service = axios.create({
@@ -65,13 +66,23 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
-    // 错误提示
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    // console.log('err' + error) // for debug
+    // console.dir(error)
+    // 捕获401 删除之前的存储的数据======错误提示=====跳转登录页(被动跳转携带401页面地址便于登录后跳转到401正常访问)
+    if (error.response && error.response.status === 401) {
+      // 避免多次token失效跳转到login
+      if (router.currentRoute.path === '/login') {
+        return
+      }
+      store.dispatch('user/logoutAction')
+      // 错误提示
+      Message({
+        message: error.response.data.message,
+        type: 'error',
+        duration: 5 * 1000
+      })
+      router.replace(`/login?redirect=${router.currentRoute.path}`)
+    }
     return Promise.reject(error)
   }
 )

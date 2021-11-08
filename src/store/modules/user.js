@@ -34,6 +34,11 @@ export default {
 
   },
   actions: {
+    // 退出登录 ---因为没有接口要在vuex中删除
+    logoutAction ({ commit }) {
+      commit('delToken')
+      commit('delUserInfo')
+    },
     // 获取个人信息
     /**
      *

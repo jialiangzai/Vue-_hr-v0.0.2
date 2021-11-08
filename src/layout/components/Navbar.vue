@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 // import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 // 404错误是后天发送的不能更改，可以默认设置一个图片显示
@@ -65,12 +65,21 @@ export default {
     ])
   },
   methods: {
+    ...mapActions('user', ['logoutAction']),
     toggleSideBar () {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout () {
       // 退出登录
       console.log('退出了')
+      try {
+        await this.$confirm('确定退出?', '提示')
+        // 确定
+        this.logoutAction()
+        this.$router.push('/login')
+      } catch (error) {
+        console.log('取消了退出登录')
+      }
     }
   }
 }
