@@ -8,7 +8,7 @@
  * @param {string} cFormat
  * @returns {string | null}
  */
-export function parseTime(time, cFormat) {
+export function parseTime (time, cFormat) {
   if (arguments.length === 0 || !time) {
     return null
   }
@@ -45,7 +45,7 @@ export function parseTime(time, cFormat) {
   const time_str = format.replace(/{([ymdhisa])+}/g, (result, key) => {
     const value = formatObj[key]
     // Note: getDay() returns 0 on Sunday
-    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value ] }
+    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value] }
     return value.toString().padStart(2, '0')
   })
   return time_str
@@ -56,7 +56,7 @@ export function parseTime(time, cFormat) {
  * @param {string} option
  * @returns {string}
  */
-export function formatTime(time, option) {
+export function formatTime (time, option) {
   if (('' + time).length === 10) {
     time = parseInt(time) * 1000
   } else {
@@ -98,7 +98,7 @@ export function formatTime(time, option) {
  * @param {string} url
  * @returns {Object}
  */
-export function param2Obj(url) {
+export function param2Obj (url) {
   const search = decodeURIComponent(url.split('?')[1]).replace(/\+/g, ' ')
   if (!search) {
     return {}
@@ -114,4 +114,33 @@ export function param2Obj(url) {
     }
   })
   return obj
+}
+
+// 转换数据结构 平铺的==》树形结构
+/**
+ *
+ * @param {*} list 数组不是树形结构的
+ * 转为[{name:'',children:''}] 有父子关系的
+ * 规律：
+ * 1. 公司的pid为-1
+ * 2. 公司下的顶级部门为''空字符串
+ * 3. 公司下的子孙级部门的pid 为父级的id
+ * 子pid====父id(除公司和特殊)
+ * 新建一个转换后的[]存储组织架构
+ * 构建map {}映射关系去找
+ * 对比
+ * 返回新的[]
+ */
+export function transfromTreeData (list) {
+  console.log('要转换的数据老数组', list)
+  const treeData = []
+  const map = {}
+  // 遍历
+  list.forEach(item => {
+    // item表示单个部门数据(有id和pid，顶级为空字符串)
+    // 映射到map对象中且 id 为键 数据为值
+    map[item.id] = item
+  })
+  console.log('映射关系：', map)
+  return treeData
 }
