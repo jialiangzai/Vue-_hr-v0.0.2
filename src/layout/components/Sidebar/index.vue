@@ -14,7 +14,7 @@
         :collapse-transition="false"
         mode="vertical"
       >
-        <!-- 菜单子项 -->
+        <!-- 菜单子项遍历路由的规则 -->
         <sidebar-item
           v-for="route in routes"
           :key="route.path"

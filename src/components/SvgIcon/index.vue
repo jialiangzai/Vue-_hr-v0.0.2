@@ -12,6 +12,7 @@ import { isExternal } from '@/utils/validate'
 export default {
   name: 'SvgIcon',
   props: {
+    // 父传子 根据icon文件夹下的svg的文件名
     iconClass: {
       type: String,
       required: true
