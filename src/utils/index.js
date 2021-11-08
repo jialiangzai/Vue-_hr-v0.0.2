@@ -135,7 +135,7 @@ export function param2Obj (url) {
  * 返回新的[]
  */
 export function transfromTreeData (list) {
-  console.log('要转换的数据老数组', list)
+  // console.log('要转换的数据老数组', list)
   const treeData = []
   const map = {}
   // 遍历 存映射关系

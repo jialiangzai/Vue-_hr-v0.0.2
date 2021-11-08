@@ -62,7 +62,9 @@
                       <span> 操作<i class="el-icon-arrow-down" /> </span>
                       <!-- 下拉菜单 -->
                       <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item>添加子部门</el-dropdown-item>
+                        <el-dropdown-item @click.native="addPart(data)">
+                          添加子部门
+                        </el-dropdown-item>
                         <el-dropdown-item>编辑部门</el-dropdown-item>
                         <el-dropdown-item @click.native="delPart(data)">
                           删除部门
@@ -77,15 +79,33 @@
         </el-tree>
       </el-card>
     </div>
+    <!-- 新增 -->
+    <AddDept
+      :show-dialog="showDialog"
+      :curnode="curNode"
+      :departs="departs"
+      @close-dialog="showDialog = $event"
+      @updatedepart="hGetDepartments"
+    />
   </div>
 </template>
 
 <script>
 import { getDepartments, delDepartments } from '@/api/department'
 import { transfromTreeData } from '@/utils/index'
+import AddDept from './components/add-dept'
 export default {
+  components: {
+    AddDept
+  },
   data () {
     return {
+      // 定义控制窗体显示的变量
+      showDialog: true,
+      // 当前操作部门数据
+      curData: null,
+      // node节点
+      curNode: {},
       // 数据组织架构
       departs: [
         {
@@ -112,14 +132,23 @@ export default {
     this.getDepartments()
   },
   methods: {
+    // 添加部门
+    addPart (data) {
+      this.showDialog = true
+      this.curData = data
+      console.log(data)
+    },
+    async hGetDepartments () {
+      await this.getDepartments()
+    },
     async delPart (currentd) {
       console.log('要删除的部门对象：', currentd)
       /**
-       * 1. 确认框
-       * 2. 如果有children node节点提示
-       * 3. 删除掉接口
-       * 4. 重新获取数据
-       */
+         * 1. 确认框
+         * 2. 如果有children node节点提示
+         * 3. 删除掉接口
+         * 4. 重新获取数据
+         */
       try {
         await this.$confirm(`确定要删除${currentd.name}吗?`, '提示')
         // 确定
@@ -146,12 +175,12 @@ export default {
       // 转换结构
       // 不可调用两次重复的key
       /**
-       * element组件库内部封装了数据的遍历有key且是递归的 log一次再调用函数就会报错
-       * 数组中多个对象调用函数后遍历递归用的push那么就会改变源数组，所以不是同一个地址会报错
-       */
+         * element组件库内部封装了数据的遍历有key且是递归的 log一次再调用函数就会报错
+         * 数组中多个对象调用函数后遍历递归用的push那么就会改变源数组，所以不是同一个地址会报错
+         */
       // console.log('转换后的新数据架构：', transfromTreeData(depts))
       this.departs = transfromTreeData(depts)
-      this.departs = depts
+      // this.departs = depts
     }
   }
 }
