@@ -122,10 +122,12 @@ export function param2Obj (url) {
  *
  * @param {*} list 数组不是树形结构的
  * 转为[{name:'',children:''}] 有父子关系的
+ * 一定要让后端去做因为此次练习的数据少计算少多了很耗性能，浏览器卡死
  * 规律：
  * 1. 公司的pid为-1
- * 2. 公司下的顶级部门为''空字符串
+ * 2. 公司下的顶级部门pid为''空字符串
  * 3. 公司下的子孙级部门的pid 为父级的id
+ * 核心 pid
  * 子pid====父id(除公司和特殊)
  * 新建一个转换后的[]存储组织架构
  * 构建map {}映射关系去找
@@ -136,12 +138,36 @@ export function transfromTreeData (list) {
   console.log('要转换的数据老数组', list)
   const treeData = []
   const map = {}
-  // 遍历
+  // 遍历 存映射关系
   list.forEach(item => {
     // item表示单个部门数据(有id和pid，顶级为空字符串)
     // 映射到map对象中且 id 为键 数据为值
     map[item.id] = item
   })
-  console.log('映射关系：', map)
+  // 重点 对比
+  list.forEach(item => {
+    // 因为返回的老数据是平铺的一层数据索引没有递归
+    /**
+     * 根据map映射关系去查找父级id
+     * ''=====>顶级部门 取不到
+     * 有值且为父部门的id======>父级部门追加children
+     */
+    // 排除-1公司 字符串
+    if (item.id === '-1') { return }
+    const parent = map[item.pid] // map[item.pid]==>有值表示map[id]
+    if (parent) {
+      // 子孙部门
+      if (!parent.children) {
+        // 初始化一个
+        parent.children = []
+      }
+      parent.children.push(item)
+    } else {
+      // 顶级部门
+      treeData.push(item)
+    }
+  })
+  // console.log('映射关系：', map)
+  // console.table(treeData)
   return treeData
 }

@@ -64,7 +64,9 @@
                       <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item>添加子部门</el-dropdown-item>
                         <el-dropdown-item>编辑部门</el-dropdown-item>
-                        <el-dropdown-item>删除部门</el-dropdown-item>
+                        <el-dropdown-item @click.native="delPart(data)">
+                          删除部门
+                        </el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
                   </el-col>
@@ -79,7 +81,7 @@
 </template>
 
 <script>
-import { getDepartments } from '@/api/department'
+import { getDepartments, delDepartments } from '@/api/department'
 import { transfromTreeData } from '@/utils/index'
 export default {
   data () {
@@ -110,17 +112,45 @@ export default {
     this.getDepartments()
   },
   methods: {
+    async delPart (currentd) {
+      console.log('要删除的部门对象：', currentd)
+      /**
+       * 1. 确认框
+       * 2. 如果有children node节点提示
+       * 3. 删除掉接口
+       * 4. 重新获取数据
+       */
+      try {
+        await this.$confirm(`确定要删除${currentd.name}吗?`, '提示')
+        // 确定
+        if (currentd.children && currentd.children.length > 0) {
+          return this.$message.error(`包含子部门不可删除，请删除所有子部门`)
+        }
+        await delDepartments(currentd.id)
+        // 刷新
+        this.getDepartments()
+        this.$message.success('删除成功！')
+      } catch (error) {
+        // 取消
+        console.log('取消删除')
+      }
+    },
     handleNodeClick (data) {
       console.log(data)
     },
     // 获取部门数据
     async getDepartments () {
       const { depts, companyName } = await getDepartments()
-      console.table(depts)
+      // console.table(depts)
       this.company.name = companyName
       // 转换结构
-      // transfromTreeData(depts)
-      console.log('转换后的新数据架构：', transfromTreeData(depts))
+      // 不可调用两次重复的key
+      /**
+       * element组件库内部封装了数据的遍历有key且是递归的 log一次再调用函数就会报错
+       * 数组中多个对象调用函数后遍历递归用的push那么就会改变源数组，所以不是同一个地址会报错
+       */
+      // console.log('转换后的新数据架构：', transfromTreeData(depts))
+      this.departs = transfromTreeData(depts)
       this.departs = depts
     }
   }
