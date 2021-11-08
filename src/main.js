@@ -16,7 +16,12 @@ import router from './router'
 import '@/icons' // icon
 // 添加路由守卫 2个
 import '@/permission' // permission control
-
+// 自定义指令
+import * as direct from '@/directives/index'
+// 批量注册多个 遍历一个对象把对象的所有属性名放到数组中
+Object.keys(direct).forEach(name => {
+  Vue.directive(name, direct[name])
+})
 // set ElementUI lang to EN
 // Vue.use(ElementUI, { locale })
 Vue.use(ElementUI)

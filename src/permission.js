@@ -9,14 +9,23 @@ const whiteList = ['/login', '/404']
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   NProgress.start()
+  // 401
   if (store.getters.token) {
-    // 有token
+    // 有token 判断是否是登录页
     if (to.path === '/login') {
       next('/')
     } else {
+      // 有token不是登录页
       next()
+      // 此时用户有token进行获取用户信息
+      // 判断如果没有获取用户信息才进行调用
+      // name是用户信息内的  可以是别的信息资料
+      if (!store.getters.name) {
+        // 每次跳转路由就会发送请求  资料同步最新
+        await store.dispatch('user/getUserInfoAction')
+      }
     }
   } else {
     // 无token

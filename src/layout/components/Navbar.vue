@@ -19,8 +19,8 @@
       <el-dropdown class="avatar-container" trigger="hover">
         <!-- 登录人信息 -->
         <div class="avatar-wrapper">
-          <img src="@/assets/common/bigUserHeader.png" class="user-avatar" />
-          <span class="name">管理员</span>
+          <img v-imgerr="deft" :src="avatar" class="user-avatar" />
+          <span class="name">{{ name }}</span>
           <i class="el-icon-caret-bottom" style="color: #fff" />
         </div>
         <!-- 下拉菜单 -->
@@ -45,16 +45,23 @@
 import { mapGetters } from 'vuex'
 // import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-
+// 404错误是后天发送的不能更改，可以默认设置一个图片显示
+import deft from '@/assets/common/bigUserHeader.png'
 export default {
   components: {
     // Breadcrumb,
     Hamburger
   },
+  data () {
+    return {
+      deft
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
+      'avatar',
+      'name'
     ])
   },
   methods: {
