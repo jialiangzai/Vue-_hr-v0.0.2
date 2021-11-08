@@ -28,7 +28,11 @@ $sideBarWidth: 210px;
 
 // the :export directive is the magic sauce for webpack
 // https://www.bluematador.com/blog/how-to-share-variables-between-js-and-sass
+// css in js 把css的变量导出给js使用是webpack的结果scss本身不支持 :export{变量：$scss变量}
+// 自定义样式
+$red :red;
 :export {
+  reds:$red;
   menuText: $menuText;
   menuActiveText: $menuActiveText;
   subMenuActiveText: $subMenuActiveText;

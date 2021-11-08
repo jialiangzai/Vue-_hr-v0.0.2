@@ -2,7 +2,7 @@ import store from '@/store'
 
 const { body } = document
 const WIDTH = 992 // refer to Bootstrap's responsive design
-
+// 混入对象可以把对象中定义的所有组件的api加入到另一个组件中
 export default {
   watch: {
     $route(route) {
@@ -11,6 +11,7 @@ export default {
       }
     }
   },
+  // 监听窗口变化做适配
   beforeMount() {
     window.addEventListener('resize', this.$_resizeHandler)
   },

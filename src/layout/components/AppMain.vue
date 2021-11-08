@@ -1,7 +1,8 @@
 <template>
   <section class="app-main">
+    <!-- vue全局过渡效果组件 -->
     <transition name="fade-transform" mode="out-in">
-      <!-- 二级路由挂载点 -->
+      <!-- 二级路由挂载点 key虚拟DOM 路由跳转路径避免重复缓存-->
       <router-view :key="key" />
     </transition>
   </section>
