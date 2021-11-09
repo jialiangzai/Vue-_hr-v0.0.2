@@ -21,7 +21,10 @@
                   <el-dropdown>
                     <span> 操作<i class="el-icon-arrow-down" /> </span>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>添加子部门</el-dropdown-item>
+                      <!-- 这里的添加子部门是顶级部门暂时不传递参数 -->
+                      <el-dropdown-item @click.native="addPart">
+                        添加子部门
+                      </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </el-col>
@@ -41,10 +44,10 @@
           <!-- <template #default="{ data }">
             <h1>{{ data.name }}</h1>
           </template> -->
-          <!-- 作用域插槽 data拿到的是每一个子节点的对象 -->
           <!--
       什么时候用到作用域插槽？父组件中如果想使用子组件中的数据进行自定义内容的渲染 (table 单元格数据渲染)
-    -->
+          -->
+          <!-- 作用域插槽 data拿到的是当前个子节点的对象 -->
           <template #default="{ data }">
             <el-row style="width: 100%">
               <!-- 显示部门名 与第一层对齐 -->
@@ -62,6 +65,7 @@
                       <span> 操作<i class="el-icon-arrow-down" /> </span>
                       <!-- 下拉菜单 -->
                       <el-dropdown-menu slot="dropdown">
+                        <!-- 添加顶级部门的子级部门  -->
                         <el-dropdown-item @click.native="addPart(data)">
                           添加子部门
                         </el-dropdown-item>
@@ -79,7 +83,7 @@
         </el-tree>
       </el-card>
     </div>
-    <!-- 新增 -->
+    <!-- 新增弹出层 -->
     <AddDept
       :show-dialog="showDialog"
       :curnode="curNode"
@@ -101,8 +105,8 @@ export default {
   data () {
     return {
       // 定义控制窗体显示的变量
-      showDialog: true,
-      // 当前操作部门数据
+      showDialog: false,
+      // 当前操作部门数据 是个对象
       curData: null,
       // node节点
       curNode: {},
@@ -132,7 +136,7 @@ export default {
     this.getDepartments()
   },
   methods: {
-    // 添加部门
+    // 添加部门 data表示当前添加子部门的父部门对象
     addPart (data) {
       this.showDialog = true
       this.curData = data

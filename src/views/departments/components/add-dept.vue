@@ -1,5 +1,5 @@
 <template>
-  <!-- 放置弹层组件 -->
+  <!-- 放置弹层组件 不加sync的原因:使用sync可以实现关闭但是不遵循单向数据流规则会报错 孙子不能改爷爷的数据要想改就要再进行传递给父父在传递爷爷 index>add-dept>dialog-->
   <el-dialog title="新增部门" :visible="showDialog" @close="handleCloseDialog">
     <!-- 新增部门的弹层 -->
     <!-- 表单 -->
@@ -44,12 +44,15 @@
         />
       </el-form-item>
     </el-form>
-    <!-- 底部按钮 -->
+    <!-- 底部按钮----具名插槽 -->
     <div slot="footer">
       <el-button type="primary" size="small" @click.native="clickSubmit">
         确定
       </el-button>
-      <el-button size="small">取消</el-button>
+      <!-- 点击事件是主动触发但是dialog有close事件Dialog 关闭的回调 他们重复执行了一个回调除了两次结果 解决：点击时不调用而是直接传值给父级-->
+      <el-button size="small" @click="$emit('close-dialog', false)">
+        取消
+      </el-button>
     </div>
   </el-dialog>
 </template>
@@ -132,6 +135,7 @@ export default {
   methods: {
     handleCloseDialog () {
       this.$emit('close-dialog', false)
+      console.log('我关闭了')
     },
     // 获取员工简单列表数据
     async hGetEmployeeSimple () {
@@ -155,6 +159,7 @@ export default {
         }
       })
     },
+    // 关闭弹层
     closeDialog () {
       // 通知父组件把控制弹框显示的数据设置为false
       this.$emit('close-dialog')
