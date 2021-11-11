@@ -25,6 +25,10 @@ Object.keys(direct).forEach(name => {
 // set ElementUI lang to EN
 // Vue.use(ElementUI, { locale })
 Vue.use(ElementUI)
+// 注册全局组件用插件的形式
+import ComponentPage from '@/components/index'
+// 自动执行install方法
+Vue.use(ComponentPage)
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
 // console.log('看看process', process.env)
