@@ -2,16 +2,14 @@
   <div class="department-container">
     <div class="app-container">
       <el-card shadow="always" :body-style="{ padding: '20px' }">
-        <!-- 具名插槽 传入面板头部 -->
+        <!-- 具名插槽header=》传入面板头部结构 -->
         <template #header>
-          <!-- 组织架构 -->
+          <!-- <span>组织架构</span> -->
           <!-- 用一个行列布局 -->
           <el-row>
-            <!-- 左栏公司 -->
             <el-col :span="20">
               <span>{{ company.name }}</span>
             </el-col>
-            <!-- 右栏操作 -->
             <el-col :span="4">
               <el-row type="flex" justify="end">
                 <!-- 两个内容 -->
@@ -21,8 +19,7 @@
                   <el-dropdown>
                     <span> 操作<i class="el-icon-arrow-down" /> </span>
                     <el-dropdown-menu slot="dropdown">
-                      <!-- 这里的添加子部门是顶级部门暂时不传递参数 -->
-                      <el-dropdown-item @click.native="addPart">
+                      <el-dropdown-item @click.native="addDept()">
                         添加子部门
                       </el-dropdown-item>
                     </el-dropdown-menu>
@@ -32,45 +29,39 @@
             </el-col>
           </el-row>
         </template>
-        <!-- card body 默认插槽--》面板的内容-->
-        <!-- 单个树架构 -->
+        <!-- 默认插槽=》传入面板内容 -->
         <el-tree
-          :data="departs"
+          :data="departData"
           :props="defaultProps"
           default-expand-all
           @node-click="handleNodeClick"
         >
-          <!-- 作用域插槽 -->
-          <!-- <template #default="{ data }">
-            <h1>{{ data.name }}</h1>
-          </template> -->
-          <!--
-      什么时候用到作用域插槽？父组件中如果想使用子组件中的数据进行自定义内容的渲染 (table 单元格数据渲染)
-          -->
-          <!-- 作用域插槽 data拿到的是当前个子节点的对象 -->
+          <!-- 单项数据 作用域插槽定义好了的-->
           <template #default="{ data }">
+            <!-- 单个树的项结构 -->
             <el-row style="width: 100%">
-              <!-- 显示部门名 与第一层对齐 -->
+              <!-- 显示部门名 -->
               <el-col :span="20">
                 <span>{{ data.name }}</span>
               </el-col>
-              <!-- 操作 -->
+              <!-- 部门操作按钮 -->
               <el-col :span="4">
                 <el-row type="flex" justify="end">
                   <!-- 两个内容 -->
-                  <el-col>{{ data.manager }}</el-col>
+                  <el-col>{{ data.manager || "--" }}</el-col>
                   <el-col>
                     <!-- 下拉菜单 element -->
                     <el-dropdown>
                       <span> 操作<i class="el-icon-arrow-down" /> </span>
                       <!-- 下拉菜单 -->
                       <el-dropdown-menu slot="dropdown">
-                        <!-- 添加顶级部门的子级部门  -->
-                        <el-dropdown-item @click.native="addPart(data)">
+                        <el-dropdown-item @click.native="addDept(data, 1)">
                           添加子部门
                         </el-dropdown-item>
-                        <el-dropdown-item>编辑部门</el-dropdown-item>
-                        <el-dropdown-item @click.native="delPart(data)">
+                        <el-dropdown-item @click.native="addDept(data, 2)">
+                          编辑部门
+                        </el-dropdown-item>
+                        <el-dropdown-item @click.native="delDept(data)">
                           删除部门
                         </el-dropdown-item>
                       </el-dropdown-menu>
@@ -85,18 +76,19 @@
     </div>
     <!-- 新增弹出层 -->
     <AddDept
-      :show-dialog="showDialog"
-      :curnode="curNode"
-      :departs="departs"
-      @close-dialog="showDialog = $event"
-      @updatedepart="hGetDepartments"
+      ref="editDept"
+      :show="show"
+      :curr-dept="currDept"
+      :all-depts="allDepts"
+      @close-dialog="show = $event"
+      @update-list="getDepartData"
     />
   </div>
 </template>
 
 <script>
 import { getDepartments, delDepartments } from '@/api/department'
-import { transfromTreeData } from '@/utils/index'
+import { transformTreeData } from '@/utils/index'
 import AddDept from './components/add-dept'
 export default {
   components: {
@@ -105,23 +97,25 @@ export default {
   data () {
     return {
       // 定义控制窗体显示的变量
-      showDialog: false,
+      show: false,
       // 当前操作部门数据 是个对象
-      curData: null,
-      // node节点
-      curNode: {},
+      currDept: null,
+      // departData是嵌套的要递归为了方便重新声明
+      allDepts: [],
+      // // node节点
+      // curNode: {},
       // 数据组织架构
-      departs: [
-        {
-          name: '总裁办'
+      departData: [
+        // {
+        //   name: '总裁办'
 
-        },
-        {
-          name: '财务部',
-          children: [{
-            name: '税务'
-          }]
-        }
+        // },
+        // {
+        //   name: '财务部',
+        //   children: [{
+        //     name: '税务'
+        //   }]
+        // }
       ],
       // 公司的信息
       company: { name: '', manger: 'CEO' },
@@ -133,18 +127,24 @@ export default {
     }
   },
   created () {
-    this.getDepartments()
+    this.getDepartData()
   },
   methods: {
-    // 添加部门 data表示当前添加子部门的父部门对象
-    addPart (data) {
-      this.showDialog = true
-      this.curData = data
-      console.log(data)
+    // 添加/操作部门 data表示当前添加子部门的父部门对象
+    addDept (currDept, type) {
+      /**
+       * 1为新增 2 为编辑 自定义的flag
+       */
+      // type === '1' ? '编辑' : '新增'
+      this.currDept = currDept
+      // console.log(currDept)
+      if (type === 2) {
+        // 编辑情况下做数据回显  this.$refs
+        this.$refs.editDept.getDepartDetail(this.currDept.id)
+      }
+      this.show = true
     },
-    async hGetDepartments () {
-      await this.getDepartments()
-    },
+
     async delPart (currentd) {
       console.log('要删除的部门对象：', currentd)
       /**
@@ -161,7 +161,7 @@ export default {
         }
         await delDepartments(currentd.id)
         // 刷新
-        this.getDepartments()
+        this.getDepartData()
         this.$message.success('删除成功！')
       } catch (error) {
         // 取消
@@ -172,19 +172,20 @@ export default {
       console.log(data)
     },
     // 获取部门数据
-    async getDepartments () {
+    async getDepartData () {
       const { depts, companyName } = await getDepartments()
       // console.table(depts)
       this.company.name = companyName
-      // 转换结构
+      this.allDepts = depts
+      // 转换结构s
       // 不可调用两次重复的key
       /**
          * element组件库内部封装了数据的遍历有key且是递归的 log一次再调用函数就会报错
          * 数组中多个对象调用函数后遍历递归用的push那么就会改变源数组，所以不是同一个地址会报错
          */
-      // console.log('转换后的新数据架构：', transfromTreeData(depts))
-      this.departs = transfromTreeData(depts)
-      // this.departs = depts
+      // console.log('转换后的新数据架构：', transformTreeData(depts))
+      this.departData = transformTreeData(depts)
+      // this.departData = depts
     }
   }
 }

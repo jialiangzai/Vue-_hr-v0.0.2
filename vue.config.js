@@ -43,7 +43,8 @@ module.exports = {
     },
     proxy: {
       '/api': {
-        target: 'http://ihrm-java.itheima.net',
+        // target: 'http://ihrm-java.itheima.net',
+        target: 'http://8.142.65.7:3000', // 跨域请求的地址=>告诉代理服务器去哪里请求数据
         changeOrigin: true
       }
     }

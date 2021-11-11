@@ -134,7 +134,7 @@ export function param2Obj (url) {
  * 对比
  * 返回新的[]
  */
-export function transfromTreeData (list) {
+export function transformTreeData (list) {
   // console.log('要转换的数据老数组', list)
   const treeData = []
   const map = {}

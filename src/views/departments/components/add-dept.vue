@@ -1,9 +1,13 @@
 <template>
-  <!-- 放置弹层组件 不加sync的原因:使用sync可以实现关闭但是不遵循单向数据流规则会报错 孙子不能改爷爷的数据要想改就要再进行传递给父父在传递爷爷 index>add-dept>dialog-->
-  <el-dialog title="新增部门" :visible="showDialog" @close="handleCloseDialog">
-    <!-- 新增部门的弹层 -->
-    <!-- 表单 -->
-    <el-form ref="deptForm" label-width="120px" :model="form" :rules="rules">
+  <!-- <el-dialog title="新增部门" :visible="show" width="60%" @close="close"> -->
+  <el-dialog
+    :title="form.id ? '编辑部门' : '新增部门'"
+    :visible="show"
+    width="60%"
+    @close="close"
+  >
+    <!-- 新增部门表单=》默认插槽 -->
+    <el-form ref="addForm" :model="form" :rules="rules" label-width="120px">
       <el-form-item label="部门名称" prop="name">
         <el-input
           v-model="form.name"
@@ -19,19 +23,19 @@
         />
       </el-form-item>
       <el-form-item label="部门负责人" prop="manager">
+        <!-- 必须要v-model -->
         <el-select
           v-model="form.manager"
           style="width: 80%"
           placeholder="请选择"
         >
-          <!--默认插槽  -->
-          <!-- label选项显示的值；value选项选中被保存的值 -->
           <el-option
             v-for="item in peoples"
             :key="item.id"
-            :value="item.username"
             :label="item.username"
-          />
+            :value="item.username"
+          >
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="部门介绍" prop="introduce">
@@ -44,76 +48,79 @@
         />
       </el-form-item>
     </el-form>
-    <!-- 底部按钮----具名插槽 -->
-    <div slot="footer">
-      <el-button type="primary" size="small" @click.native="clickSubmit">
-        确定
-      </el-button>
-      <!-- 点击事件是主动触发但是dialog有close事件Dialog 关闭的回调 他们重复执行了一个回调除了两次结果 解决：点击时不调用而是直接传值给父级-->
-      <el-button size="small" @click="$emit('close-dialog', false)">
-        取消
-      </el-button>
-    </div>
+    <!-- 底部=》具名插槽 -->
+    <span slot="footer">
+      <!-- 如果直接写close会有重复执行嵌套组件所以调用父子通信 -->
+      <el-button @click="$emit('close-dialog', false)">取消</el-button>
+      <el-button type="primary" @click="addDept">确定</el-button>
+    </span>
   </el-dialog>
 </template>
-
 <script>
 import { getEmployeeSimple } from '@/api/employees'
-import { addDepartments } from '@/api/department'
+import { addDepartments, getDepartDetail, updateDepartments } from '@/api/department'
 export default {
-  // 需要传入一个props变量来控制 显示或者隐藏
   props: {
-    // 控制弹出框
-    showDialog: {
+    // 父组件传进来，控制dialog是否显示
+    show: {
       type: Boolean,
       default: false
     },
-    curnode: {
+    // 当前操作部门（父）
+    currDept: {
       type: Object,
-      default: () => { }
+      default: () => ({})
     },
-    departs: {
+    // 所有部门数据
+    allDepts: {
       type: Array,
-      default () {
-        return []
-      }
+      default: () => []
     }
   },
   data () {
-    // 编码
-    const validateCode = (rule, value, callback) => {
-      // 遍历所有部门数据匹配
-      if (this.departs.some(item => item.code === value)) {
-        callback(new Error('当前code码重复'))
+    /**
+     * value 输入的部门编码
+     * callback 是否验证通过=》通过 callback() | 不通过 callback(new Error('错误信息'))
+     */
+    const validateCode = (rules, value, callback) => {
+      /**
+       * 需求：新增部门输入的部门编码全局唯一
+       * 1. 获取所有部门数据
+       * 2. 根据当前输入对比
+       * 编辑情况下排除自身  根据form中是否有id判断新增或编辑状态
+       */
+      let flag
+      if (this.form.id) {
+        // 编辑=》当前编辑部门自身已经存在的code编码不能算重复=》排除自身
+        flag = this.allDepts.some((item) => item.code === value && value !== this.currDept.code)
       } else {
+        // 新增
+        flag = this.allDepts.some((item) => item.code === value)
+      }
+      if (flag) {
+        // 有重复
+        callback(new Error('部门编码重复'))
+      } else {
+        // 没有重复
         callback()
       }
     }
     return {
+      // 表单数据
       form: {
         name: '', // 部门名称
         code: '', // 部门编码
         manager: '', // 部门管理者
         introduce: '' // 部门介绍
       },
+      // 表单校验规则
       rules: {
-        /**
-         * 部门名称（name）	必填 1-50个字符  / 同级部门中禁止出现重复部门
-         * 部门编码（code）	必填 1-50个字符  / 部门编码在整个模块中都不允许重复
-         * 部门负责人（manager）   	必填
-         * 部门介绍 ( introduce)	必填 1-300个字符
-
-         */
         name: [
-          // 非空
           { required: true, message: '部门名称不能为空', trigger: ['blur', 'change'] },
-          // 长度
           { min: 1, max: 50, message: '部门名称要求1-50个字符', trigger: ['blur', 'change'] }
         ],
         code: [
-          // 非空
           { required: true, message: '部门编码不能为空', trigger: ['blur', 'change'] },
-          // 长度
           { min: 1, max: 50, message: '部门编码要求1-50个字符', trigger: ['blur', 'change'] },
           { validator: validateCode, trigger: 'blur' }
         ],
@@ -125,54 +132,75 @@ export default {
           { min: 1, max: 300, message: '部门介绍要求1-300个字符', trigger: ['blur', 'change'] }
         ]
       },
-      // 部门负责人选择列表数据
+      // 部门负责人列表
       peoples: []
     }
   },
-  mounted () {
-    this.hGetEmployeeSimple()
+  created () {
+    this.getPeoples()
   },
   methods: {
-    handleCloseDialog () {
+    // 编辑回显数据
+    /**
+       * id 部门ID
+       */
+    async getDepartDetail (id) {
+      const detail = await getDepartDetail(id)
+      // console.log(detail)
+      this.form = detail
+    },
+    // 弹层关闭执行
+    close () {
+      console.log('弹层关闭执行')
       this.$emit('close-dialog', false)
-      console.log('我关闭了')
-    },
-    // 获取员工简单列表数据
-    async hGetEmployeeSimple () {
-      const data = await getEmployeeSimple()
-      this.peoples = data
-      console.log(data)
-    },
-
-    // 提交
-    clickSubmit () {
-      // 对整个表单进行校验的方法，参数为一个回调函数。该回调函数会在校验结束后被调用，并传入两个参数：是否校验成功和未通过校验的字段。若不传入回调函数，则会返回一个 promise
-      this.$refs.deptForm.validate(async isOK => {
-        if (isOK) {
-          // 表示可以提交了
-          // 表示可以提交了 || 顶级部门pid传空（公司下）
-          await addDepartments({ ...this.form, pid: this.curnode.id || '' })
-          // 关闭弹框
-          this.$emit('close-dialog')
-          this.$emit('updatedepart')
-          this.closeDialog()
-        }
-      })
-    },
-    // 关闭弹层
-    closeDialog () {
-      // 通知父组件把控制弹框显示的数据设置为false
-      this.$emit('close-dialog')
+      // 清理表单输入和校验
+      this.$refs.addForm.resetFields()
+      // 手动重置表单数据(为编辑部门清除表单数据做准备)
+      // 清除编辑时回显的数据
       this.form = {
-        name: '',
-        code: '',
-        manager: '',
-        introduce: ''
+        name: '', // 部门名称
+        code: '', // 部门编码
+        manager: '', // 部门管理者
+        introduce: '' // 部门介绍
       }
-      // 清除校验残留
-      this.$refs.deptForm.resetFields()
+    },
+    // 新增部门
+    async addDept () {
+      // 整体校验
+      try {
+        await this.$refs.addForm.validate()
+        console.log('校验通过')
+        // console.log('校验通过')
+        /**
+           * 1. 调用接口新增
+           * 2. 组织架构列表刷新
+           * 3. 关闭弹层
+           */
+        if (this.form.id) {
+          await updateDepartments(this.form)
+        } else {
+          // 新增
+          // 需要pid=》1. pid的值是父部门id（新增子部门） 2. pid是空（新增顶级部门）
+          await addDepartments({
+            ...this.form, pid: this.currDept.id || ''
+          })
+        }
+        // 通知父组件更新列表
+        // 不管是否是编辑还是新增都要执行的逻辑----通知父级更新
+        this.$emit('update-list')
+        this.$message.success('新增成功')
+        // 关闭弹出层
+        this.$emit('close-dialog', false)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getPeoples () {
+      const peoples = await getEmployeeSimple()
+      console.log('负责人列表：', peoples)
+      this.peoples = peoples
     }
   }
 }
-
 </script>
+
