@@ -163,6 +163,7 @@ export default {
     // 关闭
     close () {
       this.$emit('close-show', false)
+      this.$refs.addForm.resetFields()
     },
     // 获取部门数据
     // 获取部门数据
