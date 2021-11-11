@@ -15,6 +15,7 @@ export function parseTime (time, cFormat) {
   const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
   let date
   if (typeof time === 'object') {
+    // date对象
     date = time
   } else {
     if ((typeof time === 'string')) {

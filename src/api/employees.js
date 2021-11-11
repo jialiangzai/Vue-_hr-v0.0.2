@@ -23,4 +23,27 @@ export function getEmployeeList (params) {
     params
   })
 }
+/**
+ * @description: 删除员工
+ * @param {*} id 员工id
+ * @return {*}
+ */
+export function delEmployee (id) {
+  return request({
+    method: 'delete',
+    url: `/sys/user/${id}`
+  })
+}
 
+/**
+ * @description: 添加员工
+ * @param {*} data
+ * @return {*}
+ */
+export function addEmployee (data) {
+  return request({
+    method: 'post',
+    url: '/sys/user',
+    data
+  })
+}
