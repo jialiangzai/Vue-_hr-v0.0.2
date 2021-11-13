@@ -10,7 +10,13 @@
             </template>
             <!-- 插入到right插槽位置 -->
             <template #right>
-              <el-button type="warning" size="small">导入excel</el-button>
+              <el-button
+                type="warning"
+                size="small"
+                @click="$router.push('/import')"
+              >
+                导入excel
+              </el-button>
               <el-button type="danger" size="small">导出excel</el-button>
               <el-button type="primary" size="small" @click="showDialog = true">
                 新增员工

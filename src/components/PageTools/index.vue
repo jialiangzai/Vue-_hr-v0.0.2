@@ -18,7 +18,10 @@
 </template>
 
 <script>
-export default {}
+export default {
+  // 注册组件时的标签名
+  name: 'PageTool'
+}
 </script>
 
 <style lang="scss" scoped>
