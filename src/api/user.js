@@ -13,7 +13,7 @@ export function login (data) {
   })
 }
 /**
- * @description: 获取用户头像
+ * @description: 获取用户头像及员工详情信息
  * @param {*} id 用户id
  * @return {*}
  */

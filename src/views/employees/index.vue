@@ -17,7 +17,13 @@
               >
                 导入excel
               </el-button>
-              <el-button type="danger" size="small">导出excel</el-button>
+              <el-button
+                type="danger"
+                size="small"
+                @click="exportData"
+                :loading="downloadLoading"
+                >导出excel</el-button
+              >
               <el-button type="primary" size="small" @click="showDialog = true">
                 新增员工
               </el-button>
@@ -52,7 +58,12 @@
             </el-table-column>
             <el-table-column label="操作" fixed="right" width="280">
               <template #default="{ row }">
-                <el-button type="text" size="small">查看</el-button>
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="$router.push(`/employees/detail/${row.id}`)"
+                  >查看</el-button
+                >
                 <el-button type="text" size="small">分配角色</el-button>
                 <el-button type="text" size="small" @click="delEmpl(row)">
                   删除
@@ -111,13 +122,108 @@ export default {
       // 账户状态
       qy: true,
       // 对话框显示
-      showDialog: false
+      showDialog: false,
+      // 避免重复点击
+      downloadLoading: false
     }
   },
   created () {
     this.getList()
   },
   methods: {
+    // 导出
+    async exportData () {
+      // 开启导出
+      this.downloadLoading = true
+      // 导出核心 按需加载一个js模块（懒加载）
+      // import('@/vendor/Export2Excel').then(excel => {
+      //   const tHeader = ['Id', 'Title', 'Author', 'Readings', 'Date']
+      //   const filterVal = ['id', 'title', 'author', 'pageviews', 'display_time']
+      //   const list = this.list
+      //   const data = this.formatJson(filterVal, list)
+      //   // 使用js模块的方法
+      //   excel.export_json_to_excel({
+      //     header: tHeader,
+      //     data,
+      //     filename: this.filename,
+      //     autoWidth: this.autoWidth,
+      //     bookType: this.bookType
+      //   })
+      // })
+      // promise对象
+      const excel = await import('@/vendor/Export2Excel')
+      // excel.export_json_to_excel({
+      //   // 表头 必填
+      //   header: ['姓名', '工资'],
+      //   // 表头对应的具体数据 必填
+      //   data: [
+      //     ['刘备', 100],
+      //     ['关羽', 500]
+      //   ],
+      //   filename: 'excel-list', // 导出下载的文件名称
+      //   autoWidth: true, // 导出excel列宽度是否自适应
+      //   bookType: 'xlsx' // 导出生成的文件类型
+      // })
+      // excel表示导入的模块对象
+      // console.log(excel)
+      // 导出数据key对应关系
+      const map = {
+        '手机号': 'mobile',
+        '姓名': 'username',
+        '入职日期': 'timeOfEntry',
+        '聘用形式': 'formOfEmployment',
+        '工号': 'workNumber',
+        '转正日期': 'correctionTime',
+        '部门': 'departmentName'
+      }
+      // 表头 数组
+      const headerShips = Object.keys(map)
+      // 导出数据项 数组
+      const exportDatas = Object.values(map)
+      // data转二维数组-----》考虑字段
+      const data = this.transformTdata(this.list, exportDatas)
+      // 单页导出excel
+      excel.export_json_to_excel({
+        header: headerShips,
+        data,
+        // 导出下载的文件名称
+        filename: `elm-list-${Date.now()}`,
+        // 导出excel列宽度是否自适应
+        autoWidth: true,
+        // 导出生成的文件类型
+        bookType: 'xlsx'
+      })
+      // 导出结束
+      this.downloadLoading = false
+
+    },
+    // 转二维数组
+    transformTdata (list, enKeys) {
+      /**
+       * [{},{}]===>[[],[]]
+       */
+      // 最终效果
+      const newList = []
+      // 单个成员
+      list.forEach(user => {
+        // 每成员对象
+        const newItem = []
+        for (const key in user) {
+          // 过滤字段 指定导出的excel的字段
+          if (enKeys.includes(key)) {
+            if (key === 'formOfEmployment') {
+              // 聘用形式
+              newItem.push(this.formatForm(user[key]))
+            } else {
+              newItem.push(user[key])
+            }
+          }
+        }
+        newList.push(newItem)
+      })
+      // console.log('二维数组', newList)
+      return newList
+    },
     async getList () {
       const { rows, total } = await getEmployeeList(this.query)
       // console.log(rows)

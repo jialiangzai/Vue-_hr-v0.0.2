@@ -143,7 +143,7 @@ export function export_table_to_excel(id) {
     type: "application/octet-stream"
   }), "test.xlsx")
 }
-
+// 核心json导入到excel并下载本地
 export function export_json_to_excel({
   multiHeader = [],
   header,

@@ -11,6 +11,14 @@ export default {
       meta: {
         title: '员工管理', icon: 'people'
       }
+    },
+    // 员工详情
+    {
+      path: '/employees/detail/:id',
+      name: 'detail',
+      component: () => import('@/views/employees/detail.vue'),
+      hidden: true,
+      meta: { title: '员工详情' }
     }
   ]
 }
