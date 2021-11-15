@@ -2,12 +2,12 @@
   <div class="employees-container">
     <div class="app-container">
       <el-card>
-        <el-tabs>
-          <el-tab-pane label="登录账户设置">
+        <el-tabs v-model="active">
+          <el-tab-pane label="登录账户设置" name="Login">
             <!-- 登录账户设置 -->
             <LoginSetting :userInfos="userInfos" />
           </el-tab-pane>
-          <el-tab-pane label="个人详情">
+          <el-tab-pane label="个人详情" name="UserI">
             <!-- 个人详情 -->
             <userInfo :userInfos="userInfos" />
           </el-tab-pane>
@@ -28,7 +28,9 @@ export default {
   },
   data () {
     return {
-      userInfos: {}
+      userInfos: {},
+      // 默认选中第二个面板
+      active: 'UserI'
     }
   },
   created () {
@@ -37,7 +39,7 @@ export default {
   methods: {
     async getUserInfo () {
       const data = await getUserDetailById(this.$route.params.id)
-      console.log(data)
+      // console.log(data)
       this.userInfos = data
     }
   }

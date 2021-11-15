@@ -18,7 +18,7 @@
       </el-form-item>
       <el-form-item label="入职时间" prop="timeOfEntry">
         <el-date-picker
-          v-model="formData.correctionTime"
+          v-model="formData.timeOfEntry"
           style="width: 50%"
           placeholder="请选择入职时间"
         />

@@ -20,10 +20,11 @@
               <el-button
                 type="danger"
                 size="small"
-                @click="exportData"
                 :loading="downloadLoading"
-                >导出excel</el-button
+                @click="exportData"
               >
+                导出excel
+              </el-button>
               <el-button type="primary" size="small" @click="showDialog = true">
                 新增员工
               </el-button>
@@ -40,6 +41,11 @@
           >
             <el-table-column label="序号" type="index" />
             <el-table-column label="姓名" prop="username" />
+            <el-table-column label="头像">
+              <template #default="{ row }">
+                <img class="staff" :src="row.staffPhoto" />
+              </template>
+            </el-table-column>
             <el-table-column sortable label="工号" prop="workNumber" />
             <el-table-column label="聘用形式" prop="formOfEmployment">
               <!-- 自定义数据及结构把后台传递的数据进行枚举控制格式不用过滤器用函数的形式 -->
@@ -62,8 +68,9 @@
                   type="text"
                   size="small"
                   @click="$router.push(`/employees/detail/${row.id}`)"
-                  >查看</el-button
                 >
+                  查看
+                </el-button>
                 <el-button type="text" size="small">分配角色</el-button>
                 <el-button type="text" size="small" @click="delEmpl(row)">
                   删除
@@ -195,7 +202,6 @@ export default {
       })
       // 导出结束
       this.downloadLoading = false
-
     },
     // 转二维数组
     transformTdata (list, enKeys) {
@@ -284,3 +290,12 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.employees-container {
+  .staff {
+    width: 70px;
+    height: 70px;
+    border-radius: 100%;
+  }
+}
+</style>

@@ -3,7 +3,8 @@
  */
 import PageTool from '@/components/PageTools'
 import UploadExcel from '@/components/UploadExcel'
-const components = [PageTool, UploadExcel]
+import UploadImg from '@/components/UploadImg'
+const components = [PageTool, UploadExcel, UploadImg]
 export default {
   /**
    *
