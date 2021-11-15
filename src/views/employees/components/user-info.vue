@@ -50,6 +50,7 @@
 </template>
 <script>
 import { saveUserDetailById } from '@/api/employees'
+import { mapActions } from 'vuex'
 export default {
   props: {
     userInfos: {
@@ -66,10 +67,15 @@ export default {
     }
   },
   methods: {
+    ...mapActions('user', ['getUserInfoAction']),
     updateInfo () {
       this.$refs.userFormss.validate(async valid => {
         if (!valid) return
         await saveUserDetailById(this.userInfos)
+        // 如果更改的是登录人就实现头像同步
+        if (this.$route.params.id === this.userInfos.id) {
+          this.getUserInfoAction()
+        }
         this.$message.success('更新成功')
       })
     }

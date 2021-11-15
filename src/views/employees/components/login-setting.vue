@@ -2,22 +2,22 @@
   <div class="app-container">
     <!-- 放置表单 -->
     <el-form
+      ref="userFormss"
       label-width="60px"
       :model="userInfos"
-      ref="userFormss"
       :rules="rules"
     >
       <el-form-item label="姓名:" prop="username">
-        <el-input style="width: 300px" v-model.trim="userInfos.username" />
+        <el-input v-model.trim="userInfos.username" style="width: 300px" />
       </el-form-item>
       <el-form-item label="手机号:">
-        <el-input disabled style="width: 300px" v-model="userInfos.mobile" />
+        <el-input v-model="userInfos.mobile" disabled style="width: 300px" />
       </el-form-item>
       <el-form-item label="密码:">
         <el-input
+          v-model="userInfos.password"
           disabled
           style="width: 300px"
-          v-model="userInfos.password"
           type="password"
         />
       </el-form-item>
@@ -30,6 +30,7 @@
 </template>
 <script>
 import { saveUserDetailById } from '@/api/employees'
+import { mapActions } from 'vuex'
 export default {
   props: {
     userInfos: {
@@ -45,11 +46,15 @@ export default {
     }
   },
   methods: {
+    ...mapActions('user', ['getUserInfoAction']),
     // 校验
     updeName () {
       this.$refs.userFormss.validate(async valid => {
         if (!valid) return
         await saveUserDetailById(this.userInfos)
+        if (this.$route.params.id === this.userInfos.id) {
+          this.getUserInfoAction()
+        }
         // 密码是加密的，所以不能直接修改
         this.$message.success('更新成功')
       })
