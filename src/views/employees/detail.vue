@@ -5,11 +5,11 @@
         <el-tabs v-model="active">
           <el-tab-pane label="登录账户设置" name="Login">
             <!-- 登录账户设置 -->
-            <LoginSetting :userInfos="userInfos" />
+            <LoginSetting :user-infos="userInfos" />
           </el-tab-pane>
           <el-tab-pane label="个人详情" name="UserI">
             <!-- 个人详情 -->
-            <userInfo :userInfos="userInfos" />
+            <userInfo :user-infos="userInfos" />
           </el-tab-pane>
         </el-tabs>
       </el-card>
@@ -21,7 +21,7 @@ import LoginSetting from './components/login-setting.vue'
 import userInfo from './components/user-info.vue'
 import { getUserDetailById } from '@/api/user'
 export default {
-  name: 'detail',
+  name: 'Detail',
   components: {
     LoginSetting,
     userInfo

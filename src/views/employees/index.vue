@@ -43,7 +43,11 @@
             <el-table-column label="姓名" prop="username" />
             <el-table-column label="头像">
               <template #default="{ row }">
-                <img class="staff" :src="row.staffPhoto" />
+                <img
+                  class="staff"
+                  :src="row.staffPhoto"
+                  @click="qurCode(row.staffPhoto)"
+                />
               </template>
             </el-table-column>
             <el-table-column sortable label="工号" prop="workNumber" />
@@ -100,6 +104,18 @@
       </el-card>
     </div>
     <AddEmpl :show-dialog="showDialog" @close-show="showDialog = $event" />
+    <!-- 分享展示, 预览的二维码的弹层 -->
+    <el-dialog
+      width="300px"
+      title="二维码"
+      :visible="showCodeDialog"
+      @close="showCodeDialog = false"
+    >
+      <!-- 二维码 -->
+      <el-row type="flex" justify="center" align="center">
+        <canvas ref="myCanvas"></canvas>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
@@ -110,6 +126,11 @@ console.log('枚举的数据', EnumTypes)
 import dayjs from 'dayjs'
 // 导入新增员工组件
 import AddEmpl from './components/add-employee.vue'
+// 二维码
+// 基本用法
+import QrCode from 'qrcode'
+// dom为一个canvas的dom对象， info为转化二维码的信息
+// QrCode.toCanvas(dom, info)
 export default {
   components: {
     AddEmpl
@@ -131,13 +152,27 @@ export default {
       // 对话框显示
       showDialog: false,
       // 避免重复点击
-      downloadLoading: false
+      downloadLoading: false,
+      showCodeDialog: false
     }
   },
   created () {
     this.getList()
   },
   methods: {
+    // 二维码
+    qurCode (url) {
+      if (!url) {
+        return
+      }
+      this.showCodeDialog = true
+      // 异步更新对话框 必须拿到路径之后
+      // Dialog 的内容是懒渲染的，即在第一次被打开之前，传入的默认 slot 不会被渲染到 DOM 上。
+      // 如果这里 url 写的是网址, 就会跳转到对应网址 (二维码分享效果)
+      this.$nextTick(() => {
+        QrCode.toCanvas(this.$refs.myCanvas, url)
+      })
+    },
     // 导出
     async exportData () {
       // 开启导出
