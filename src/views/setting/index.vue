@@ -63,7 +63,7 @@
             </el-row>
           </el-tab-pane>
           <el-tab-pane label="公司信息">
-            <h1>黑马137</h1>
+            <h1>The Shy</h1>
           </el-tab-pane>
         </el-tabs>
       </el-card>

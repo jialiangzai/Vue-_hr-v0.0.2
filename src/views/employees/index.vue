@@ -75,7 +75,9 @@
                 >
                   查看
                 </el-button>
-                <el-button type="text" size="small">分配角色</el-button>
+                <el-button type="text" size="small" @click="openRole(row)">
+                  分配角色
+                </el-button>
                 <el-button type="text" size="small" @click="delEmpl(row)">
                   删除
                 </el-button>
@@ -116,6 +118,8 @@
         <canvas ref="myCanvas"></canvas>
       </el-row>
     </el-dialog>
+    <!-- 分配角色 -->
+    <AssignRole :show-assign-role-dialog.sync="showAssignRoleDialog" />
   </div>
 </template>
 
@@ -131,9 +135,14 @@ import AddEmpl from './components/add-employee.vue'
 import QrCode from 'qrcode'
 // dom为一个canvas的dom对象， info为转化二维码的信息
 // QrCode.toCanvas(dom, info)
+// 注册分配角色弹出层
+import AssignRole from './components/assign-role.vue'
 export default {
   components: {
-    AddEmpl
+    // 新增抽离组件化
+    AddEmpl,
+    // 分配角色
+    AssignRole
   },
   data () {
     return {
@@ -153,13 +162,21 @@ export default {
       showDialog: false,
       // 避免重复点击
       downloadLoading: false,
-      showCodeDialog: false
+      // 二维码
+      showCodeDialog: false,
+      // 分配角色
+      showAssignRoleDialog: false
     }
   },
   created () {
     this.getList()
   },
   methods: {
+    // 分配角色弹出层
+    openRole (row) {
+      this.showAssignRoleDialog = true
+      console.log('当前要分配角色的用户信息', row)
+    },
     // 二维码
     qurCode (url) {
       if (!url) {
