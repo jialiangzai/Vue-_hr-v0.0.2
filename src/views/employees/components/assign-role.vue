@@ -77,7 +77,7 @@ export default {
       await assignRoles({ id: this.userId, roleIds: this.rolesList })
       this.$message.success('分配角色成功')
       // 关闭弹框
-      this.$emit('update:showRoleDialog', false)
+      this.$emit('update:showAssignRoleDialog', false)
     }
   }
 }
