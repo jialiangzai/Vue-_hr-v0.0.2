@@ -119,7 +119,10 @@
       </el-row>
     </el-dialog>
     <!-- 分配角色 -->
-    <AssignRole :show-assign-role-dialog.sync="showAssignRoleDialog" />
+    <AssignRole
+      ref="assginR"
+      :show-assign-role-dialog.sync="showAssignRoleDialog"
+    />
   </div>
 </template>
 
@@ -173,9 +176,12 @@ export default {
   },
   methods: {
     // 分配角色弹出层
-    openRole (row) {
+    async openRole (row) {
+      // 数据回显显示当前点击的用户的已有角色
+      // await this.$refs.assginR.getRoleDetail(row.id)
+      this.$refs.assginR.getRoleDetail(row.id)
       this.showAssignRoleDialog = true
-      console.log('当前要分配角色的用户信息', row)
+      console.log('当前点击的节点对象信息', row)
     },
     // 二维码
     qurCode (url) {
@@ -183,8 +189,8 @@ export default {
         return
       }
       this.showCodeDialog = true
-      // 异步更新对话框 必须拿到路径之后
       // Dialog 的内容是懒渲染的，即在第一次被打开之前，传入的默认 slot 不会被渲染到 DOM 上。
+      // 绘制二维码之前=》先打开弹层=》canvas还没有渲染=》解决：this.$nextTick(callback:fn)
       // 如果这里 url 写的是网址, 就会跳转到对应网址 (二维码分享效果)
       this.$nextTick(() => {
         QrCode.toCanvas(this.$refs.myCanvas, url)
