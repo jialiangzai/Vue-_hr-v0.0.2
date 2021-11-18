@@ -14,7 +14,7 @@
     </el-checkbox-group>
     <!-- 底部 -->
     <template #footer>
-      <el-button type="primary" size="small">确定</el-button>
+      <el-button type="primary" size="small" @click="saveRole">确定</el-button>
       <el-button
         size="small"
         @click="$emit('update:show-assign-role-dialog', false)"
@@ -30,6 +30,7 @@
 import { getRoleList } from '@/api/setting'
 // 数据回显api===》user个人用户信息
 import { getUserDetailById } from '@/api/user'
+import { assignRoles } from '@/api/employees'
 export default {
   props: {
     showAssignRoleDialog: {
@@ -70,6 +71,13 @@ export default {
       this.userId = id
       // 赋值===》数据回显 roleIds是一个数组
       this.rolesList = res.roleIds
+    },
+    // 分配角色实现
+    async saveRole () {
+      await assignRoles({ id: this.userId, roleIds: this.rolesList })
+      this.$message.success('分配角色成功')
+      // 关闭弹框
+      this.$emit('update:showRoleDialog', false)
     }
   }
 }
