@@ -53,6 +53,8 @@ export default {
     // 关闭弹出层
     close () {
       this.$emit('update:show-assign-role-dialog', false)
+      // 重新赋值避免会闪动上一个用户角色列表
+      this.rolesList = []
     },
     // 获取全部角色列表
     async getRoleList () {

@@ -30,7 +30,13 @@
                 <template #default="{ row }">
                   <!-- 获取当前行数据 -->
                   <!-- <p>{{ row }}</p> -->
-                  <el-button size="small" type="success">分配权限</el-button>
+                  <el-button
+                    size="small"
+                    type="success"
+                    @click="openPerDialog(row.id)"
+                  >
+                    分配权限
+                  </el-button>
                   <!-- <el-button size="small" type="primary">编辑</el-button> -->
                   <el-button size="small" type="primary" @click="editRole(row)">
                     编辑
@@ -95,11 +101,18 @@
         <el-button type="primary" @click="addRoles">确定</el-button>
       </span>
     </el-dialog>
+    <!-- 点击为角色分配权限 -->
+    <AssignPermission ref="Pers" :show-role-per.sync="showRolePer" />
   </div>
 </template>
 <script>
 import { getRoleList, deleteRole, addRole, getRoleDetail, updateRole } from '@/api/setting'
+// 分配权限组件
+import AssignPermission from './components/assign-perm.vue'
 export default {
+  components: {
+    AssignPermission
+  },
   data () {
     return {
       // 角色列表
@@ -112,6 +125,8 @@ export default {
       total: 0,
       // 显示弹层
       show: false,
+      // 显示为角色分配权限
+      showRolePer: false,
       // 表单数据（新增|编辑）
       roleForm: {
         name: '',
@@ -127,6 +142,13 @@ export default {
     this.getRoleList() // 获取角色列表
   },
   methods: {
+    // 为角色分配权限打开弹出层
+    openPerDialog (id) {
+      console.log('当前点击的角色', id)
+      // 调用子组件的方法实现数据的回显
+      this.showRolePer = true
+      this.$refs.Pers.getPerDetail(id)
+    },
     async getRoleList () {
       const { total, rows } = await getRoleList(this.query)
       this.total = total

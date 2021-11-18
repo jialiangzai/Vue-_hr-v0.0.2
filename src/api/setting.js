@@ -56,3 +56,15 @@ export function updateRole (data) {
     method: 'put'
   })
 }
+/**
+ *
+ * @param {*} data 给角色分配权限 {id:角色id, permIds:[] 所有选中的节点的id组成的数组}
+ * @returns
+ */
+export function assignPerm (data) {
+  return request({
+    url: '/sys/role/assignPrem',
+    method: 'put',
+    data
+  })
+}
