@@ -40,7 +40,10 @@ export default {
     ]),
     // 动态计算路由配置规则===》生成新的菜单子项
     routes () {
-      return this.$router.options.routes
+      // 只能获取静态的addRoutes的无法获取
+      // return this.$router.options.routes
+      // 拿到的是一个完整的包含了静态路由和动态路由的数据结构
+      return this.$store.state.routes.menuList
     },
     activeMenu () {
       const route = this.$route

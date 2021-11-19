@@ -14,6 +14,7 @@ import attendancesRouter from './modules/attendances'
 import salarysRouter from './modules/salarys'
 import settingRouter from './modules/setting'
 import socialRouter from './modules/social'
+
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -39,7 +40,7 @@ import socialRouter from './modules/social'
  * all roles can be accessed
  */
 // asyncRoutes 动态路由 (需要权限)
-const asyncRoutes = [
+export const asyncRoutes = [
   // 组织架构 （公司的人员架构）
   departmentsRouter,
   // 公司设置 （角色管理）
@@ -89,10 +90,10 @@ export const constantRoutes = [
       path: '',
       component: () => import('@/views/import')
     }]
-  },
+  }
   // 404 page must be placed at the end !!!
-  // 重定向
-  { path: '*', redirect: '/404', hidden: true }
+  // 重定向 动态权限路由
+
 ]
 // 工厂函数 创建路由实例
 const createRouter = () => new Router({
@@ -100,7 +101,7 @@ const createRouter = () => new Router({
   // 切换路由滚动条回到顶部
   scrollBehavior: () => ({ y: 0 }),
   // 合并静态路由和动态路由 根据权限去过滤规则
-  routes: [...constantRoutes, ...asyncRoutes]
+  routes: constantRoutes
 })
 
 const router = createRouter()

@@ -1,6 +1,6 @@
 import * as auth from '@/utils/auth'
 import { login, getUserInfo, getUserDetailById } from '@/api/user'
-
+import { resetRouter } from '@/router'
 export default {
   namespaced: true,
   state: {
@@ -38,6 +38,9 @@ export default {
     logoutAction ({ commit }) {
       commit('delToken')
       commit('delUserInfo')
+      // 重置路由状态和vuex存储路由数据
+      resetRouter()
+      commit('routes/setmenuList', [], { root: true })
     },
     // 获取个人信息
     /**
@@ -51,7 +54,7 @@ export default {
       // console.log('用户的头像和基础信息', photoInfo, userInfo)
       commit('setUserInfo', { ...userInfo, ...photoInfo })
       // 返回用户信息对象
-      return userInfo
+      return userInfo.roles
     },
     // 定义后台请求的方法和逻辑业务 (异步)
     // 登录请求

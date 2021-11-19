@@ -10,6 +10,7 @@
             <el-row style="padding: 10px 0">
               <!-- <el-button icon="el-icon-plus" size="small" type="primary"> -->
               <el-button
+                v-if="checkPermission('p-ro-add')"
                 icon="el-icon-plus"
                 size="small"
                 type="primary"

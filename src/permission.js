@@ -3,12 +3,12 @@
  * 有token  是否是登录页
  * 无token  判断是否是白名单 是白名单 直接访问 不是白名单就要跳转登录页
  */
-import router from './router'
+import router, { asyncRoutes } from '@/router'
 import store from './store'
 const whiteList = ['/login', '/404']
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-
+// 权限路由管理
 router.beforeEach(async (to, from, next) => {
   NProgress.start()
   // 401
@@ -24,7 +24,17 @@ router.beforeEach(async (to, from, next) => {
       // name是用户信息内的  可以是别的信息资料
       if (!store.getters.name) {
         // 每次跳转路由就会发送请求  资料同步最新
-        await store.dispatch('user/getUserInfoAction')
+        // 拿到菜单权限数据
+        const roles = await store.dispatch('user/getUserInfoAction')
+        // 开始匹配动态路由表过滤留下能访问的
+        const canLook = asyncRoutes.filter(route => {
+          return roles.menus.includes(route.children[0].name)
+        })
+        // 菜单图标
+        store.commit('routes/setmenuList', canLook)
+        //  { path: '*', redirect: '/404', hidden: true }
+        router.addRoutes([...canLook, { path: '*', redirect: '/404', hidden: true }])
+        next(to.path)
       }
     }
   } else {

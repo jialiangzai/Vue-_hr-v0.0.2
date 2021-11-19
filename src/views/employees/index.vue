@@ -25,7 +25,12 @@
               >
                 导出excel
               </el-button>
-              <el-button type="primary" size="small" @click="showDialog = true">
+              <el-button
+                v-if="checkPermission('p-em-add')"
+                type="primary"
+                size="small"
+                @click="showDialog = true"
+              >
                 新增员工
               </el-button>
             </template>

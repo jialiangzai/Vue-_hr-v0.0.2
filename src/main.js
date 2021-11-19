@@ -22,6 +22,9 @@ import * as direct from '@/directives/index'
 Object.keys(direct).forEach(name => {
   Vue.directive(name, direct[name])
 })
+// 全局混入
+import checkPermission from '@/mixin'
+Vue.mixin(checkPermission)
 // set ElementUI lang to EN
 // Vue.use(ElementUI, { locale })
 Vue.use(ElementUI)
