@@ -75,6 +75,7 @@ export default {
           setTimeout(() => {
             this.$emit('update:staffPhoto', `https://${data.Location}`)
             this.showProcess = false
+            this.percentage = 0
           }, 800)
         }
       }

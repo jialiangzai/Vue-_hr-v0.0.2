@@ -7,6 +7,7 @@ const getters = {
   // 手机号
   mobile: state => state.user.userInfo.mobile,
   name: state => state.user.userInfo.username,
-  company: state => state.user.userInfo.company
+  company: state => state.user.userInfo.company,
+  departmentName: state => state.user.userInfo.departmentName
 }
 export default getters
