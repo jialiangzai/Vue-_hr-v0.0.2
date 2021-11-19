@@ -25,6 +25,9 @@ Object.keys(direct).forEach(name => {
 // 全局混入
 import checkPermission from '@/mixin'
 Vue.mixin(checkPermission)
+// echarts按需加载
+import importEcharts from '@/utils/plugins.js'
+Vue.use(importEcharts)
 // set ElementUI lang to EN
 // Vue.use(ElementUI, { locale })
 Vue.use(ElementUI)
