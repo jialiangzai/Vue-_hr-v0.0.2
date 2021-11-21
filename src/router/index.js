@@ -97,7 +97,7 @@ export const constantRoutes = [
 ]
 // 工厂函数 创建路由实例
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  mode: 'history', // require service support
   // 切换路由滚动条回到顶部
   scrollBehavior: () => ({ y: 0 }),
   // 合并静态路由和动态路由 根据权限去过滤规则

@@ -110,6 +110,11 @@ module.exports = {
         include: 'initial'
       }
     ])
+    // 注入cdn变量 (打包时会执行)
+    config.plugin('html').tap(args => {
+      args[0].cdn = cdn // 配置cdn给插件
+      return args
+    })
     // when there are many pages, it will cause too many meaningless requests
     config.plugins.delete('prefetch')
 
