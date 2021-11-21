@@ -8,7 +8,7 @@
     <!-- 面包屑 -->
     <!-- 公司信息 -->
     <div class="app-breadcrumb">
-      {{ $t('route.title') }}
+      {{ $t("route.title") }}
       <span class="breadBtn">体验版</span>
     </div>
     <!-- <breadcrumb class="breadcrumb-container" /> -->
@@ -16,6 +16,8 @@
 
     <!-- 右侧下拉菜单 -->
     <div class="right-menu">
+      <!-- 动态切换多语言 -->
+      <Lang class="rm-item" />
       <!-- 全屏 -->
       <ScreenFull class="rm-item" />
       <el-dropdown class="avatar-container" trigger="hover">
@@ -28,14 +30,14 @@
         <!-- 下拉菜单 -->
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
-            <el-dropdown-item> {{ $t('navbar.dashboard') }} </el-dropdown-item>
+            <el-dropdown-item> {{ $t("navbar.dashboard") }} </el-dropdown-item>
           </router-link>
           <a target="_blank" href="https://gitee.com">
-            <el-dropdown-item> {{ $t('navbar.github') }} </el-dropdown-item>
+            <el-dropdown-item> {{ $t("navbar.github") }} </el-dropdown-item>
           </a>
           <!-- 事件穿透 -->
           <el-dropdown-item divided @click.native="logout">
-            <span style="display: block">{{ $t('navbar.logOut') }}</span>
+            <span style="display: block">{{ $t("navbar.logOut") }}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>

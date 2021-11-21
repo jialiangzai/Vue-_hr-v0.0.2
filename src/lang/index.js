@@ -7,10 +7,12 @@ Vue.use(VueI18n)
 import customZH from './zh'
 // 引入自定义英文包
 import customEN from './en'
+import Cookie from 'js-cookie'
 const i18n = new VueI18n(
   {
     // 指定语言类型 zh表示中文  en表示英文  字符串
-    locale: 'en',
+    // 实现动态
+    locale: Cookie.get('lange') || 'zh',
     // 将elementUI语言包加入到插件语言数据里
     messages: {
       en: {
