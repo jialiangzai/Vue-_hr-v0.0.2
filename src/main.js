@@ -30,7 +30,14 @@ import importEcharts from '@/utils/plugins.js'
 Vue.use(importEcharts)
 // set ElementUI lang to EN
 // Vue.use(ElementUI, { locale })
-Vue.use(ElementUI)
+// 全局多语言
+import i18n from '@/lang'
+// Vue.use(ElementUI)
+// Vue.use({ i18n: (key, value) => i18n.t(key, value) })
+// 固定写法
+Vue.use(ElementUI, {
+  i18n: (k, v) => i18n.t(k, v)
+})
 // 注册全局组件用插件的形式
 import ComponentPage from '@/components/index'
 // 自动执行install方法
@@ -39,10 +46,11 @@ Vue.use(ComponentPage)
 // Vue.use(ElementUI)
 // console.log('看看process', process.env)
 Vue.config.productionTip = false
-
+// 加入到根实例配置项中 this.$
 new Vue({
   el: '#app',
   router,
   store,
+  i18n,
   render: h => h(App)
 })

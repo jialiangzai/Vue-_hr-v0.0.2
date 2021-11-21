@@ -8,7 +8,7 @@
     <!-- 面包屑 -->
     <!-- 公司信息 -->
     <div class="app-breadcrumb">
-      江苏传智播客教育科技股份有限公司
+      {{ $t('route.title') }}
       <span class="breadBtn">体验版</span>
     </div>
     <!-- <breadcrumb class="breadcrumb-container" /> -->
@@ -28,14 +28,14 @@
         <!-- 下拉菜单 -->
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
-            <el-dropdown-item> 首页 </el-dropdown-item>
+            <el-dropdown-item> {{ $t('navbar.dashboard') }} </el-dropdown-item>
           </router-link>
           <a target="_blank" href="https://gitee.com">
-            <el-dropdown-item> 项目地址 </el-dropdown-item>
+            <el-dropdown-item> {{ $t('navbar.github') }} </el-dropdown-item>
           </a>
           <!-- 事件穿透 -->
           <el-dropdown-item divided @click.native="logout">
-            <span style="display: block">退出登录</span>
+            <span style="display: block">{{ $t('navbar.logOut') }}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
