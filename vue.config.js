@@ -5,20 +5,6 @@ const defaultSettings = require('./src/settings.js')
 function resolve (dir) {
   return path.join(__dirname, dir)
 }
-
-const name = defaultSettings.title || 'vue Admin Template' // page title
-/**
- * 指令 dev本地地址 prod stage后台的prod 三个环境
- * /api
- * /prod-api
- */
-// If your port is set to 80,
-// use administrator privileges to execute the command line.
-// For example, Mac: sudo npm run
-// You can change the port by the following methods:
-// port = 9528 npm run dev OR npm run dev --port = 9528
-// 短路 设置开发服务端口 node中的process进程 用webpack注入到js
-const port = process.env.port || process.env.npm_config_port || 9528 // dev port
 // 把排除的大体积文件=》使用cdn方式引入（上线生产环境生效,开发环境不排除
 /**
       * externals 对象属性解析：
@@ -31,8 +17,8 @@ let cdn = {
   css: [],
   js: []
 }
-const isEnv_prod = process.env.NODE_ENV === 'productions' // 生产环境
-if (isEnv_prod) {
+const isEnvprod = process.env.NODE_ENV === 'production' // 生产环境
+if (isEnvprod) {
   // 排除
   // 1. 减少应用打包出来的包体积
   // 2. 加快静态资源的访问
@@ -56,6 +42,20 @@ if (isEnv_prod) {
       'https://cdn.jsdelivr.net/npm/xlsx@0.16.6/dist/xlsx.full.min.js']
   }
 }
+
+const name = defaultSettings.title || 'vue Admin Template' // page title
+/**
+ * 指令 dev本地地址 prod stage后台的prod 三个环境
+ * /api
+ * /prod-api
+ */
+// If your port is set to 80,
+// use administrator privileges to execute the command line.
+// For example, Mac: sudo npm run
+// You can change the port by the following methods:
+// port = 9528 npm run dev OR npm run dev --port = 9528
+// 短路 设置开发服务端口 node中的process进程 用webpack注入到js
+const port = process.env.port || process.env.npm_config_port || 9528 // dev port
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
   /**
