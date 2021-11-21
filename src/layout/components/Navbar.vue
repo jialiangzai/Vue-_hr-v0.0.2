@@ -16,6 +16,8 @@
 
     <!-- 右侧下拉菜单 -->
     <div class="right-menu">
+      <!-- 全屏 -->
+      <ScreenFull class="rm-item" />
       <el-dropdown class="avatar-container" trigger="hover">
         <!-- 登录人信息 -->
         <div class="avatar-wrapper">
@@ -134,7 +136,11 @@ export default {
     float: right;
     height: 100%;
     line-height: 50px;
-
+    .rm-item {
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 16px;
+    }
     &:focus {
       outline: none;
     }

@@ -4,7 +4,8 @@
 import PageTool from '@/components/PageTools'
 import UploadExcel from '@/components/UploadExcel'
 import UploadImg from '@/components/UploadImg'
-const components = [PageTool, UploadExcel, UploadImg]
+import ScreenFull from '@/components/ScreenFull'
+const components = [PageTool, UploadExcel, UploadImg, ScreenFull]
 export default {
   /**
    *
